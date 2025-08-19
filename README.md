@@ -1,303 +1,195 @@
-# Financial Research Chatbot
+# Financial & Deep Research AI Chatbot
 
-A production-ready AI-powered financial research assistant built with FastAPI, LangGraph, Redis, Kafka, and vector search capabilities.
+A FastAPI-based AI chatbot that uses LangGraph and LangChain to provide intelligent responses to financial and banking queries, with optional deep research capabilities using web search.
 
-## 🚀 Features
+## Features
 
-- **Intelligent Query Processing**: Uses LangGraph to orchestrate complex financial research workflows
-- **Multi-Agent Architecture**: Specialized agents for finance and banking queries
-- **Vector Knowledge Retrieval**: Integrates with Pinecone/FAISS for semantic search
-- **Caching Layer**: Redis-based caching for improved performance and cost reduction
-- **Async Message Processing**: Kafka integration for handling high-volume requests
-- **Production-Ready**: Comprehensive error handling, logging, and monitoring
+- **Intent Detection**: Automatically detects whether queries are related to banking or finance
+- **Deep Research**: Option to perform web research using DuckDuckGo search
+- **LangGraph Workflow**: Uses LangGraph for structured conversation flow
+- **Ollama Integration**: Local LLM support using Ollama
+- **FastAPI Backend**: Modern, fast API with automatic documentation
 
-## 🏗️ Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   FastAPI App  │    │   LangGraph     │    │   Vector DB     │
-│                 │    │   Workflow      │    │   (Pinecone/    │
-│  - /query      │◄──►│                 │◄──►│   FAISS)        │
-│  - /health     │    │  - Query Flow   │    │                 │
-│  - /stats      │    │  - Agent Routing│    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Redis Cache   │    │   Kafka Queue   │    │   LLM Agents    │
-│                 │    │                 │    │                 │
-│  - Query Cache │    │  - Async Msgs   │    │  - FinanceAgent │
-│  - Response    │    │  - Event Stream │    │  - BankingAgent │
-│  - User Data   │    │  - Load Balance │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-## 📁 Project Structure
-
-```
-financial-research-chatbot/
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI entrypoint
-│   ├── graph.py             # LangGraph workflow definition
-│   ├── agents/
-│   │   ├── __init__.py
-│   │   ├── finance_agent.py # General financial queries
-│   │   └── banking_agent.py # Banking-specific queries
-│   └── services/
-│       ├── __init__.py
-│       ├── cache.py         # Redis integration
-│       ├── queue.py         # Kafka producer/consumer
-│       └── vector_db.py     # Vector DB wrapper
-├── config.py                # Configuration management
-├── requirements.txt         # Python dependencies
-└── README.md               # This file
-```
-
-## 🛠️ Installation
-
-### Prerequisites
+## Prerequisites
 
 - Python 3.8+
-- Redis server
-- Kafka cluster (optional for development)
-- Docker (recommended)
+- Ollama installed and running locally
+- A Llama2 model downloaded (e.g., `llama2:7b`)
 
-### 1. Clone the Repository
+## Installation
 
+1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd financial-research-chatbot
+cd FastAPI
 ```
 
-### 2. Create Virtual Environment
-
+2. Create a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### 3. Install Dependencies
-
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Environment Configuration
-
-Create a `.env` file based on the configuration in `config.py`:
-
+4. Install and start Ollama:
 ```bash
-# Copy and modify the example configuration
-cp config.py .env
+# Download Ollama from https://ollama.ai/
+# Then pull the Llama2 model:
+ollama pull llama2:7b
 ```
 
-### 5. Start Infrastructure Services
+## Usage
 
-#### Using Docker Compose (Recommended)
-
-```bash
-# Start Redis and Kafka
-docker-compose up -d redis kafka
-```
-
-#### Manual Setup
+### Starting the Server
 
 ```bash
-# Start Redis
-redis-server
-
-# Start Kafka (requires separate setup)
-# Follow Kafka documentation for your platform
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 6. Run the Application
-
-```bash
-# Development mode
-python -m app.main
-
-# Or using uvicorn directly
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-## 🚀 Usage
+The API will be available at `http://localhost:8000`
 
 ### API Endpoints
 
-#### 1. Health Check
-```bash
-curl http://localhost:8000/health
+#### POST /query
+Submit a query to the AI chatbot.
+
+**Request Body:**
+```json
+{
+  "user_query": "How do I open a savings account?",
+  "deep_research": false,
+  "generate_report": false,
+  "session_id": "optional-session-id"
+}
 ```
 
-#### 2. Process Financial Query
-```bash
-curl -X POST "http://localhost:8000/query" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "query": "How should I diversify my investment portfolio?",
-       "user_id": "user123"
-     }'
+**Response:**
+```json
+{
+  "response": "AI generated response...",
+  "intent": "banking",
+  "deep_research": false,
+  "generate_report": false,
+  "report_generated": false,
+  "pdf_report_path": null,
+  "session_id": "optional-session-id"
+}
 ```
 
-#### 3. Get System Statistics
-```bash
-curl http://localhost:8000/stats
+#### POST /query/stream
+**🚀 NEW: Streaming endpoint for real-time chat-like responses!**
+
+Submit a query and receive live streaming updates as the AI processes your request.
+
+**Request Body:** Same as `/query`
+
+**Response:** Server-Sent Events (SSE) stream with real-time updates:
+
+```javascript
+// Frontend usage example
+const eventSource = new EventSource('/query/stream');
+eventSource.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    
+    switch(data.type) {
+        case 'start':
+            console.log('Starting analysis...');
+            break;
+        case 'status':
+            console.log('Status:', data.message);
+            break;
+        case 'response_chunk':
+            console.log('Response chunk:', data.content);
+            // Append to chat interface
+            break;
+        case 'complete':
+            console.log('Analysis complete!');
+            eventSource.close();
+            break;
+    }
+};
 ```
 
-### Example Queries
+**Streaming Features:**
+- **Real-time status updates** during processing
+- **Live response chunks** for chat-like experience
+- **Progress indicators** for each step
+- **Automatic completion** when done
 
-#### Finance Queries
-- "What are the best investment strategies for beginners?"
-- "How much should I save for retirement?"
-- "What is compound interest and how does it work?"
+**Note:** `generate_report` only works when `deep_research` is `true`. PDF reports are only generated for comprehensive research queries.
 
-#### Banking Queries
-- "How do I improve my credit score?"
-- "What should I look for when comparing mortgage rates?"
-- "What are the benefits of high-yield savings accounts?"
+#### GET /download-report/{filename}
+Download a generated PDF report by filename.
 
-## 🔧 Configuration
+#### GET /reports
+List all available PDF reports with metadata.
 
-### Environment Variables
+#### GET /health
+Health check endpoint.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
-| `KAFKA_BOOTSTRAP_SERVERS` | Kafka brokers | `localhost:9092` |
-| `VECTOR_DB_TYPE` | Vector database type | `mock` |
-| `PINECONE_API_KEY` | Pinecone API key | `None` |
-| `FASTAPI_PORT` | Application port | `8000` |
+### Testing
 
-### Vector Database Options
-
-1. **Mock Mode** (Default): In-memory mock database for development
-2. **Pinecone**: Cloud-based vector database
-3. **FAISS**: Facebook's similarity search library
-
-## 🧪 Development
-
-### Running Tests
-
-```bash
-# Install test dependencies
-pip install pytest pytest-asyncio
-
-# Run tests
-pytest
-```
-
-### Adding New Agents
-
-1. Create a new agent class in `app/agents/`
-2. Implement the `process_query` method
-3. Add routing logic in `app/graph.py`
-4. Update the agent initialization
-
-### Adding New Services
-
-1. Create a new service class in `app/services/`
-2. Implement required methods
-3. Add to the main application initialization
-4. Update health checks and statistics
-
-## 📊 Monitoring & Observability
-
-### Health Checks
-
-- `/health` - Overall system health
-- Service-specific health checks for Redis, Kafka, and Vector DB
-
-### Statistics
-
-- `/stats` - System performance metrics
-- Cache hit/miss ratios
-- Query processing times
-- Agent usage statistics
-
-### Logging
-
-- Structured logging with configurable levels
-- Request/response logging
-- Error tracking and reporting
-
-## 🚀 Production Deployment
-
-### Docker Deployment
+Run the test script to verify the graph functionality:
 
 ```bash
-# Build image
-docker build -t financial-chatbot .
-
-# Run container
-docker run -p 8000:8000 \
-  -e REDIS_URL=redis://redis:6379 \
-  -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
-  financial-chatbot
+python test_graph.py
 ```
 
-### Kubernetes Deployment
+## Architecture
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: financial-chatbot
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: financial-chatbot
-  template:
-    metadata:
-      labels:
-        app: financial-chatbot
-    spec:
-      containers:
-      - name: chatbot
-        image: financial-chatbot:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: REDIS_URL
-          value: "redis://redis-service:6379"
-```
+The application uses a **modular agent-based architecture** with LangGraph workflow:
 
-## 🔒 Security Considerations
+### 🤖 **Agent System:**
+- **BaseAgent**: Common functionality and logging for all agents
+- **BankingAgent**: Specialized in banking queries (accounts, loans, credit, etc.)
+- **FinanceAgent**: Specialized in investment and financial planning
+- **DeepResearchAgent**: Performs web research and comprehensive analysis
 
-- API key management for external services
-- Rate limiting and request validation
-- Input sanitization and validation
-- Secure communication protocols
-- Access control and authentication (to be implemented)
+### 🔄 **Graph Workflow:**
+1. **query_check**: Validates query sufficiency
+2. **intent_detection**: Detects user intent (banking/finance)
+3. **intent_branch**: Routes to appropriate agent
+4. **Agent Processing**: Delegates to specialized agent for processing
+5. **end**: Final response generation
 
-## 🤝 Contributing
+### 🏗️ **Benefits of Agent Architecture:**
+- **Modular**: Each agent handles specific domain expertise
+- **Maintainable**: Easy to add new agents or modify existing ones
+- **Testable**: Individual agents can be tested independently
+- **Scalable**: New capabilities can be added as new agents
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+## Configuration
 
-## 📝 License
+- **Ollama Model**: Change the model in `app/graph.py` line 25
+- **Search Results**: Modify the `max_results` parameter in the `duckduckgo_search` method
+- **Port**: Change the port in `app/main.py` or use environment variables
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Error Handling
 
-## 🆘 Support
+The application includes comprehensive error handling for:
+- Search failures
+- LLM errors
+- Invalid queries
+- Graph execution errors
 
-For support and questions:
-- Create an issue in the repository
-- Check the documentation
-- Review the code examples
+## Development
 
-## 🔮 Future Enhancements
+To add new capabilities:
+1. Add new nodes to the graph in `app/graph.py`
+2. Define the node function
+3. Add appropriate edges and routing logic
+4. Update the state schema if needed
 
-- [ ] Real LLM integration (OpenAI, Anthropic)
-- [ ] Advanced query classification
-- [ ] Multi-language support
-- [ ] User authentication and authorization
-- [ ] Advanced analytics and reporting
-- [ ] WebSocket support for real-time updates
-- [ ] Integration with financial data APIs
-- [ ] Machine learning model training pipeline
+## Troubleshooting
+
+- **Ollama Connection Issues**: Ensure Ollama is running and the model is downloaded
+- **Search Failures**: Check internet connectivity and DuckDuckGo availability
+- **Graph Compilation Errors**: Verify all nodes and edges are properly defined
+
+## License
+
+This project is licensed under the MIT License.
