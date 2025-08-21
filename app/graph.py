@@ -84,20 +84,20 @@ class FinancialResearchGraph:
 
     # ------------------ Node functions ------------------
     async def check_query_sufficiency(self, state: GraphState) -> GraphState:
-        print(f"🔍 [query_check] Checking query: '{state['query']}'")
+        print(f" [query_check] Checking query: '{state['query']}'")
         if len(state["query"].split()) < 3:
             state["response"] = "Query insufficient. Please add more details."
-            print(f"❌ [query_check] Query insufficient - words: {len(state['query'].split())}")
+            print(f"[query_check] Query insufficient - words: {len(state['query'].split())}")
         else:
             state["response"] = "SUFFICIENT"
-            print(f"✅ [query_check] Query sufficient - words: {len(state['query'].split())}")
+            print(f" [query_check] Query sufficient - words: {len(state['query'].split())}")
         return state
 
     async def detect_intent(self, state: GraphState) -> GraphState:
-        print(f"🧠 [intent_detection] Starting intent detection...")
+        print(f" [intent_detection] Starting intent detection...")
         # Only detect intent if not deep research
         if not state.get("deep_research"):
-            prompt = f"Determine intent: {state['query']}. Possible: banking, finance."
+            prompt = f"Determine intent: {state['query']}. Possible: banking, finance. And Provide a single word response either banking or finance."
             print(f"🤖 [intent_detection] Calling LLM with prompt: {prompt[:100]}...")
             start_time = asyncio.get_event_loop().time()
             response = self.llm_client(prompt)
