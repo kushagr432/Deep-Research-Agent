@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    "query_check",
+    "intent_detection",
+    "intent_branch",
+    "deep_research_node",
+    "banking",
+    "finance",
+    "end"
+  ],
+  "edges": [
+    [
+      "deep_research_node",
+      "__end__"
+    ],
+    [
+      "intent_detection",
+      "intent_branch"
+    ],
+    [
+      "finance",
+      "__end__"
+    ],
+    [
+      "__start__",
+      "query_check"
+    ],
+    [
+      "end",
+      "__end__"
+    ],
+    [
+      "query_check",
+      "intent_detection"
+    ],
+    [
+      "banking",
+      "__end__"
+    ]
+  ],
+  "entry_point": "query_check",
+  "conditional_edges": {
+    "intent_branch": {
+      "deep_research": "deep_research_node",
+      "banking": "banking",
+      "finance": "finance",
+      "end": "end"
+    }
+  },
+  "state_schema": {
+    "query": "str",
+    "intent": "Optional[str]",
+    "response": "Optional[str]",
+    "web_data": "Optional[str]",
+    "deep_research": "bool",
+    "generate_report": "bool",
+    "pdf_report_path": "Optional[str]",
+    "report_generated": "bool"
+  }
+}

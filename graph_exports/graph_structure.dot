@@ -1,0 +1,27 @@
+digraph FinancialResearchGraph {
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial", fontsize=10];
+    edge [fontname="Arial", fontsize=8];
+    
+    // Nodes
+    "query_check";
+    "intent_detection";
+    "intent_branch";
+    "deep_research_node";
+    "banking";
+    "finance";
+    "end";
+
+    // Edges
+    "deep_research_node" -> "__end__";
+    "intent_detection" -> "intent_branch";
+    "finance" -> "__end__";
+    "__start__" -> "query_check";
+    "end" -> "__end__";
+    "query_check" -> "intent_detection";
+    "banking" -> "__end__";
+    "intent_branch" -> "deep_research_node" [label="deep_research"];
+    "intent_branch" -> "banking" [label="banking"];
+    "intent_branch" -> "finance" [label="finance"];
+    "intent_branch" -> "end" [label="end"];
+}

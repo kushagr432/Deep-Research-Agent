@@ -1,0 +1,28 @@
+@startuml FinancialResearchGraph
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+title Financial Research LangGraph Structure
+
+rectangle "query_check" as querycheck
+rectangle "intent_detection" as intentdetection
+rectangle "intent_branch" as intentbranch
+rectangle "deep_research_node" as deepresearchnode
+rectangle "banking" as banking
+rectangle "finance" as finance
+rectangle "end" as end
+
+deepresearchnode --> end
+intentdetection --> intentbranch
+finance --> end
+start --> querycheck
+end --> end
+querycheck --> intentdetection
+banking --> end
+intentbranch --> deepresearchnode : deep_research
+intentbranch --> banking : banking
+intentbranch --> finance : finance
+intentbranch --> end : end
+@enduml

@@ -110,6 +110,18 @@ Please include:
 4. Steps to take or next actions
 5. When to consult a professional
 
+<Hard Limits>
+*Tool Call Budgets* (Prevent excessive searching):
+- *Simple queries*: Use 2-3 search tool calls maximum
+- *Complex queries*: Use up to 5 search tool calls maximum
+- *Always stop*: After 5 search tool calls if you cannot find the right sources
+
+*Stop Immediately When*:
+- You can answer the user's question comprehensively
+- You have 3+ relevant examples/sources for the question
+- Your last 2 searches returned similar information
+</Hard Limits>
+
 Focus on practical, actionable banking advice that helps users make informed decisions."""
 
     def _get_capabilities(self) -> list:

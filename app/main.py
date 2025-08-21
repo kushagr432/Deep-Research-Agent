@@ -52,7 +52,7 @@ async def query_endpoint(request: QueryRequest):
             "generate_report": final_state.get("generate_report"),
             "report_generated": final_state.get("report_generated"),
             "pdf_report_path": final_state.get("pdf_report_path"),
-            "session_id": request.session_id
+            "session_id": request.session_id #this is just for reference no implementation currently
         })
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}")

@@ -228,7 +228,7 @@ Please provide:
 Focus on providing valuable financial insights."""
         else:
             # Create a structured prompt with web data
-             prompt = f"""
+            prompt = f"""
 You are a professional financial research analyst tasked with preparing a **comprehensive deep research report** on the following query:
 
 **Research Topic:** {query}
