@@ -15,13 +15,7 @@ class BaseAgent(ABC):
     async def process(self, query: str, **kwargs) -> Dict[str, Any]:
         """Process a query and return results"""
         pass
-    
-    async def process_stream(self, query: str, **kwargs) -> AsyncGenerator[Dict[str, Any], None]:
-        """Process a query with streaming updates - override in subclasses for custom streaming"""
-        # Default streaming implementation
-        result = await self.process(query, **kwargs)
-        yield result
-    
+     
     def _log_start(self, operation: str, query: str):
         """Log the start of an operation"""
         print(f"🚀 [{self.agent_name}] Starting {operation}: '{query[:100]}...'")
