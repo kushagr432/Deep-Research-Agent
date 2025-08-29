@@ -1,22 +1,18 @@
-graph TD
-    %% Nodes
-    query_check[query_check]
-    intent_detection[intent_detection]
-    intent_branch[intent_branch]
-    deep_research_node[deep_research_node]
-    banking[banking]
-    finance[finance]
-    end[end]
-
-    %% Edges
-    deep_research_node --> __end__
-    intent_detection --> intent_branch
-    finance --> __end__
-    __start__ --> query_check
-    end --> __end__
+graph TB
+    query_check[Query Check]
+    intent_detection[Intent Detection]
+    intent_branch[Intent Branch]
+    deep_research_node[Deep Research]
+    banking[Banking Agent]
+    finance[Finance Agent]
+    end[End]
+    
     query_check --> intent_detection
-    banking --> __end__
+    intent_detection --> intent_branch
     intent_branch -->|deep_research| deep_research_node
     intent_branch -->|banking| banking
     intent_branch -->|finance| finance
     intent_branch -->|end| end
+    deep_research_node --> end
+    banking --> end
+    finance --> end

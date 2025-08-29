@@ -1,27 +1,25 @@
 digraph FinancialResearchGraph {
     rankdir=TB;
-    node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial", fontsize=10];
-    edge [fontname="Arial", fontsize=8];
+    node [shape=box, style=filled, fillcolor=lightblue];
+    edge [color=gray50];
     
     // Nodes
-    "query_check";
-    "intent_detection";
-    "intent_branch";
-    "deep_research_node";
-    "banking";
-    "finance";
-    "end";
-
+    query_check [label="Query Check", fillcolor=lightgreen];
+    intent_detection [label="Intent Detection", fillcolor=lightyellow];
+    intent_branch [label="Intent Branch", fillcolor=lightcoral];
+    deep_research_node [label="Deep Research", fillcolor=lightsteelblue];
+    banking [label="Banking Agent", fillcolor=lightpink];
+    finance [label="Finance Agent", fillcolor=lightcyan];
+    end [label="End", fillcolor=lightgray];
+    
     // Edges
-    "deep_research_node" -> "__end__";
-    "intent_detection" -> "intent_branch";
-    "finance" -> "__end__";
-    "__start__" -> "query_check";
-    "end" -> "__end__";
-    "query_check" -> "intent_detection";
-    "banking" -> "__end__";
-    "intent_branch" -> "deep_research_node" [label="deep_research"];
-    "intent_branch" -> "banking" [label="banking"];
-    "intent_branch" -> "finance" [label="finance"];
-    "intent_branch" -> "end" [label="end"];
+    query_check -> intent_detection;
+    intent_detection -> intent_branch;
+    intent_branch -> deep_research_node [label="deep_research"];
+    intent_branch -> banking [label="banking"];
+    intent_branch -> finance [label="finance"];
+    intent_branch -> end [label="end"];
+    deep_research_node -> end;
+    banking -> end;
+    finance -> end;
 }

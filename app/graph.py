@@ -440,3 +440,5 @@ class FinancialResearchGraph:
             print(f"⚠️ [GRAPH] Error in _ensure_json_serializable: {str(e)}")
             # Return original state if serialization fails
             return state
+
+graph = FinancialResearchGraph().compiled_graph
