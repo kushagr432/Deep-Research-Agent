@@ -1,0 +1,42 @@
+{
+  "project_name": "financial-research-ai",
+  "description": "Financial & Deep Research AI Chatbot with LangGraph",
+  "version": "0.1.0",
+  "langgraph_version": "0.6.6",
+  "python_version": "3.13",
+  "entrypoint": "app.main:app",
+  "graphs": {
+    "sample_graph": "app.graph:graph"
+  },
+  "dependencies": [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "langgraph>=0.6.6",
+    "langchain>=0.3.27",
+    "langchain-community>=0.3.27",
+    "langchain-core>=0.3.74",
+    "langchain-openai>=0.3.31",
+    "pydantic>=2.5.0",
+    "ddgs>=9.5.4",
+    "ollama>=0.1.7",
+    "python-multipart>=0.0.6",
+    "requests>=2.31.0",
+    "reportlab>=4.0.4",
+    "aiohttp>=3.9.1",
+    "yfinance>=0.2.28",
+    "plotly>=5.17.0",
+    "pandas>=2.2.0",
+    "python-dateutil>=2.8.2"
+  ],
+  "env": {
+    "LANGSMITH_API_KEY": "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",
+    "LANGSMITH_TRACING_V2": "true",
+    "LANGSMITH_ENDPOINT": "https://api.smith.langchain.com",
+    "OPENROUTER_API_KEY": "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"
+  },
+  "port": 8000,
+  "host": "0.0.0.0",
+  "reload": true,
+  "workers": 1,
+  "log_level": "info"
+}

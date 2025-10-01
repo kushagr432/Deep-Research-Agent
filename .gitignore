@@ -257,7 +257,7 @@ reports/
 .env.development
 .env.test
 .env.production
-
+.env
 # Temporary files
 tmp/
 temp/
