@@ -13,9 +13,13 @@ app = FastAPI(title="Financial & Deep Research AI Chatbot")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # Or specific domains
+    allow_origins=[
+        "https://deep-research-agent-frontend.vercel.app",
+        "http://localhost:3000",  # For local development
+        "http://localhost:3001",  # Alternative local port
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 # Initialize LangGraph / LangChain graph
