@@ -15,7 +15,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://deep-research-agent-frontend.vercel.app",
-        "https://deep-research-agent-frontend.vercel.app/"
+        "https://deep-research-agent-frontend.vercel.app/",
         "https://deep-research-agent-frontend.vercel.app/*",
         "http://localhost:3000",  # For local development
         "http://localhost:3001",  # Alternative local port
