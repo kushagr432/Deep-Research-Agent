@@ -13,11 +13,7 @@ app = FastAPI(title="Financial & Deep Research AI Chatbot")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://deep-research-agent-frontend.vercel.app",
-        "http://localhost:3000",  # For local development
-        "http://localhost:3001",  # Alternative local port
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -139,19 +135,6 @@ async def query_stream_endpoint(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing streaming query: {str(e)}")
 
-@app.options("/{path:path}")
-async def options_handler(path: str):
-    """Handle CORS preflight requests"""
-    return JSONResponse(
-        content={"message": "OK"},
-        headers={
-            "Access-Control-Allow-Origin": "https://deep-research-agent-frontend.vercel.app",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        }
-    )
-
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -169,20 +152,12 @@ async def download_report(filename: str):
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="Report not found")
         
-        # Return the file for download with explicit CORS headers
-        response = FileResponse(
+        # Return the file for download
+        return FileResponse(
             path=file_path,
             filename=filename,
             media_type='application/pdf'
         )
-        
-        # Add explicit CORS headers for FileResponse
-        response.headers["Access-Control-Allow-Origin"] = "https://deep-research-agent-frontend.vercel.app"
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        
-        return response
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error downloading report: {str(e)}")
@@ -200,20 +175,12 @@ async def download_dashboard(filename: str):
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="Dashboard not found")
         
-        # Return the file for download with explicit CORS headers
-        response = FileResponse(
+        # Return the file for download with proper HTML media type
+        return FileResponse(
             path=file_path,
             filename=filename,
             media_type='text/html'
         )
-        
-        # Add explicit CORS headers for FileResponse
-        response.headers["Access-Control-Allow-Origin"] = "https://deep-research-agent-frontend.vercel.app"
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        
-        return response
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error downloading dashboard: {str(e)}")
@@ -293,19 +260,11 @@ async def view_dashboard(filename: str):
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="Dashboard not found")
         
-        # Return the HTML file for viewing with explicit CORS headers
-        response = FileResponse(
+        # Return the HTML file for viewing in browser
+        return FileResponse(
             path=file_path,
             media_type='text/html'
         )
-        
-        # Add explicit CORS headers for FileResponse
-        response.headers["Access-Control-Allow-Origin"] = "https://deep-research-agent-frontend.vercel.app"
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        
-        return response
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error viewing dashboard: {str(e)}")
